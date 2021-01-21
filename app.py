@@ -1,0 +1,66 @@
+import pandas as pd
+from flask import Flask, render_template, url_for, request, redirect
+from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+import logics
+
+x, y, z = logics.logic_a(2, 2, 2)
+
+app = Flask(__name__)
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
+db = SQLAlchemy(app)
+
+class Calcs(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    content = db.Column(db.String(30), nullable=False)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow())
+
+    def __repr__(self):
+        return '<Task %r>' % self.id
+
+
+@app.route('/', methods=['POST', 'GET'])
+def index():
+    if request.method == 'POST':
+        task_content = request.form['content1']
+        new_task = Calcs(content=task_content)
+
+        try:
+            db.session.add(new_task)
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'There was an error adding the task.'
+    else:
+        tasks = Calcs.query.order_by(Calcs.date_created).all()  # tasks holds all the records
+        return render_template('index.html', tasks=tasks)
+
+@app.route('/delete/<int:id>')
+def delete(id):
+    task_to_delete = Calcs.query.get_or_404(id)
+
+    try:
+        db.session.delete(task_to_delete)
+        db.session.commit()
+        return redirect('/')
+    except:
+        return 'There was a deleting problem.'
+
+@app.route('/update/<int:id>', methods=['GET', 'POST'])
+def update(id):
+    task = Calcs.query.get_or_404(id)
+
+    if request.method == 'POST':
+        task.content = request.form['content1']
+
+        try:
+            db.session.commit()
+            return redirect('/')
+        except:
+            return 'There was an issue updating the task.'
+    else:
+        return render_template('update.html', task=task)
+
+# Ctrl + Shift + R - css modifications will reload (cache cleared reload)
+if __name__ == "__main__":
+    app.run(debug=True)
