@@ -4,8 +4,6 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import logics
 
-x, y, z = logics.logic_a(2, 2, 2)
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
@@ -15,6 +13,10 @@ class Calcs(db.Model):
     content_x = db.Column(db.String(30), nullable=False, default='0')
     content_y = db.Column(db.String(30), nullable=False, default='0')
     content_z = db.Column(db.String(30), nullable=False, default='0')
+    logic_number = db.Column(db.String(30), nullable=False, default='1')
+    content_x_out = db.Column(db.String(30), nullable=False, default='0')
+    content_y_out = db.Column(db.String(30), nullable=False, default='0')
+    content_z_out = db.Column(db.String(30), nullable=False, default='0')
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
@@ -27,8 +29,18 @@ def index():
         content_x_in = request.form['content1']
         content_y_in = request.form['content2']
         content_z_in = request.form['content3']
+        logic = request.form['content4']
 
-        new_task = Calcs(content_x=content_x_in, content_y=content_y_in, content_z=content_z_in)
+        x, y, z = logics.logic_a(int(content_x_in), int(content_y_in), int(content_z_in))
+        # print(x, y, z)
+
+        new_task = Calcs(content_x=content_x_in,
+                         content_y=content_y_in,
+                         content_z=content_z_in,
+                         logic_number=logic,
+                         content_x_out=x,
+                         content_y_out=y,
+                         content_z_out=z)
 
         try:
             db.session.add(new_task)

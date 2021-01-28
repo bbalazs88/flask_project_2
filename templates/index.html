@@ -16,15 +16,26 @@
             <th>x</th>
             <th>y</th>
             <th>z</th>
+            <th>logic</th>
+            <th>x_out</th>
+            <th>y_out</th>
+            <th>z_out</th>
             <th>Added</th>
             <th>Actions</th>
 
         </tr>
         {% for task in tasks %}
             <tr>
-                <td>{{ task.content_x}}</td>
-                <td>{{ task.content_y}}</td>
-                <td>{{ task.content_z}}</td>
+                <td>{{ task.content_x }}</td>
+                <td>{{ task.content_y }}</td>
+                <td>{{ task.content_z }}</td>
+
+                <td>{{ task.logic_number }}</td>
+
+                <td>{{ task.content_x_out }}</td>
+                <td>{{ task.content_y_out }}</td>
+                <td>{{ task.content_z_out }}</td>
+
                 <td>{{ task.date_created.date() }}</td>
                 <td>
                     <a href="/delete/{{task.id}}">Delete</a>
@@ -37,11 +48,21 @@
     {% endif %}
 
     <form action="/" method="POST">
+        <label for="content1">x value</label>
         <input type="text" name="content1" id="content1">
+
+        <label for="content2">y value</label>
         <input type="text" name="content2" id="content2">
+
+        <label for="content3">z value</label>
         <input type="text" name="content3" id="content3">
+
+        <label for="logic_number">Logic number (1-4)</label>
+        <input type="text" name="content4" id="logic_number">
+
         <input type="submit" value="Calculate">
     </form>
+
 </div>
 
 
