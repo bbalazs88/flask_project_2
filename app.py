@@ -4,15 +4,19 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 import logics
 
-x, y, z = logics.logic_a(2, 2, 2)
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 db = SQLAlchemy(app)
 
 class Calcs(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    content = db.Column(db.String(30), nullable=False)
+    content_x = db.Column(db.String(30), nullable=False, default='0')
+    content_y = db.Column(db.String(30), nullable=False, default='0')
+    content_z = db.Column(db.String(30), nullable=False, default='0')
+    logic_number = db.Column(db.String(30), nullable=False, default='1')
+    content_x_out = db.Column(db.String(30), nullable=False, default='0')
+    content_y_out = db.Column(db.String(30), nullable=False, default='0')
+    content_z_out = db.Column(db.String(30), nullable=False, default='0')
     date_created = db.Column(db.DateTime, default=datetime.utcnow())
 
     def __repr__(self):
@@ -22,8 +26,21 @@ class Calcs(db.Model):
 @app.route('/', methods=['POST', 'GET'])
 def index():
     if request.method == 'POST':
-        task_content = request.form['content1']
-        new_task = Calcs(content=task_content)
+        content_x_in = request.form['content1']
+        content_y_in = request.form['content2']
+        content_z_in = request.form['content3']
+        logic = request.form['content4']
+
+        x, y, z = logics.logic_a(int(content_x_in), int(content_y_in), int(content_z_in))
+        # print(x, y, z)
+
+        new_task = Calcs(content_x=content_x_in,
+                         content_y=content_y_in,
+                         content_z=content_z_in,
+                         logic_number=logic,
+                         content_x_out=x,
+                         content_y_out=y,
+                         content_z_out=z)
 
         try:
             db.session.add(new_task)
@@ -51,7 +68,9 @@ def update(id):
     task = Calcs.query.get_or_404(id)
 
     if request.method == 'POST':
-        task.content = request.form['content1']
+        task.content_x = request.form['content1']
+        task.content_y = request.form['content2']
+        task.content_z = request.form['content3']
 
         try:
             db.session.commit()
