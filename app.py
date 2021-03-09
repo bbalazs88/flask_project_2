@@ -31,8 +31,17 @@ def index():
         content_z_in = request.form['content3']
         logic = request.form['content4']
 
-        x, y, z = logics.logic_a(int(content_x_in), int(content_y_in), int(content_z_in))
-        # print(x, y, z)
+        #logic_num = logics.logic_selector(int(logic))
+        #print(logic_num)
+
+        deltax_in, deltay_in, deltaz_in, pitch_in, roll_in, yaw_in, resize_x_in, resize_y_in, resize_z_in = \
+            logics.logic_selector(int(logic))
+        # print(pitch_in, roll_in)
+
+        x, y, z = logics.logic_calc(int(content_x_in), int(content_y_in), int(content_z_in),
+                                    deltax_in, deltay_in, deltaz_in, pitch_in, roll_in, yaw_in,
+                                    resize_x_in, resize_y_in, resize_z_in)
+        # print(x, y, z, logic_num)
 
         new_task = Calcs(content_x=content_x_in,
                          content_y=content_y_in,
@@ -71,6 +80,7 @@ def update(id):
         task.content_x = request.form['content1']
         task.content_y = request.form['content2']
         task.content_z = request.form['content3']
+        task.logic_number = request.form['content4']
 
         try:
             db.session.commit()
