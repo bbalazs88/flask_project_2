@@ -147,7 +147,7 @@ def logic_calc(x_in, y_in, z_in, deltax_in, deltay_in, deltaz_in, pitch_in, roll
     # zoom/scaling factor
     resize_x = resize_x_in
     resize_y = resize_y_in
-    resize_z =resize_z_in
+    resize_z = resize_z_in
 
     start_coordinate=np.array([x, y, z, 1])
     # translation
