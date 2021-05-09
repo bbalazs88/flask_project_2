@@ -31,17 +31,19 @@ def index():
         content_z_in = request.form['content3']
         logic = request.form['content4']
 
-        #logic_num = logics.logic_selector(int(logic))
-        #print(logic_num)
+        logic_num = logics.logic_selector(int(logic))
+        print(logic_num)
+
+        # TODO: float mezőknél a vesszőt is fogadja el!
 
         deltax_in, deltay_in, deltaz_in, pitch_in, roll_in, yaw_in, resize_x_in, resize_y_in, resize_z_in = \
             logics.logic_selector(int(logic))
         # print(pitch_in, roll_in)
 
-        x, y, z = logics.logic_calc(int(content_x_in), int(content_y_in), int(content_z_in),
+        x, y, z = logics.logic_calc(float(content_x_in), float(content_y_in), float(content_z_in),
                                     deltax_in, deltay_in, deltaz_in, pitch_in, roll_in, yaw_in,
-                                    resize_x_in, resize_y_in, resize_z_in)
-        # print(x, y, z, logic_num)
+                                    resize_x_in, resize_y_in, resize_z_in, int(logic))
+        print(x, y, z, logic)
 
         new_task = Calcs(content_x=content_x_in,
                          content_y=content_y_in,
@@ -80,7 +82,11 @@ def update(id):
         task.content_x = request.form['content1']
         task.content_y = request.form['content2']
         task.content_z = request.form['content3']
-        task.logic_number = request.form['content4']
+
+        if request.form['content4'] in ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']:
+            task.logic_number = request.form['content4']
+        else:
+            return '<h2> bazzz </h2>'
 
         try:
             db.session.commit()
